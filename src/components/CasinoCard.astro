@@ -1,0 +1,477 @@
+---
+interface Props {
+    name: string;
+    logo: string;
+    /** Lines separated by \n or <br> */
+    offer: string;
+    /** Score on a 0–5 or 0–10 scale */
+    rating: string | number;
+    votes?: number | string;
+    link: string;
+    accentTop?: boolean;
+    rel?: string;
+    target?: "_self" | "_blank";
+    tickSrc?: string; // default tick icon
+    starSrc?: string; // default star icon
+}
+
+const {
+    name,
+    logo,
+    offer,
+    rating,
+    votes = 756,
+    link,
+    accentTop = false,
+    rel,
+    target,
+    tickSrc = "/tick.png",
+    starSrc = "/star.png",
+} = Astro.props as Props;
+
+// normalize rating to /5 (accepts /10 too)
+const raw = typeof rating === "string" ? parseFloat(rating) : rating;
+const rating5 = Number.isFinite(raw) ? (raw > 5 ? (raw / 10) * 5 : raw) : 0;
+const rating5Display = Math.max(0, Math.min(5, Math.round(rating5 * 10) / 10));
+const starsFilled = Math.round(rating5Display);
+
+// split offers
+const offerLines = offer
+    .split(/<br\s*\/?>|\n/g)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+// link attrs
+const isExternal = /^https?:\/\//i.test(link);
+const relDefault = isExternal
+    ? "noopener noreferrer sponsored nofollow"
+    : undefined;
+const relAttr = [rel, relDefault].filter(Boolean).join(" ") || undefined;
+const targetAttr = target ?? (isExternal ? "_blank" : "_self");
+---
+
+<article
+    class={"casino-card" + (accentTop ? " accent" : "")}
+    itemscope
+    itemtype="https://schema.org/Brand"
+>
+    <div class="grid">
+        <!-- logo -->
+        <div class="left">
+            <div class="logo-wrap">
+                <img
+                    class="imgae"
+                    src={logo}
+                    alt={`${name} logo`}
+                    loading="lazy"
+                    decoding="async"
+                />
+            </div>
+        </div>
+
+        <!-- checks -->
+        <div class="middle">
+            <ul class="checks" itemprop="slogan">
+                {
+                    offerLines.map((line) => (
+                        <li>
+                            <img
+                                class="tick"
+                                src={tickSrc}
+                                alt=""
+                                aria-hidden="true"
+                            />
+                            <span class="info">{line}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+
+        <!-- rating -->
+        <div
+            class="rating"
+            aria-label={`Rating ${rating5Display.toFixed(1)} out of 5`}
+        >
+            <div class="badge">
+                <div class="badge-top">
+                    <div
+                        class="score"
+                        itemprop="aggregateRating"
+                        itemscope
+                        itemtype="https://schema.org/AggregateRating"
+                    >
+                        <span class="num" itemprop="ratingValue"
+                            >{rating5Display.toFixed(1)}</span
+                        >
+                        <meta itemprop="bestRating" content="5" />
+                        <meta itemprop="worstRating" content="0" />
+                    </div>
+                    <div class="stars" aria-hidden="true">
+                        {
+                            Array.from({ length: 5 }).map((_, i) => (
+                                <img
+                                    class={
+                                        "star" +
+                                        (i < starsFilled ? " filled" : "")
+                                    }
+                                    src={starSrc}
+                                    alt=""
+                                />
+                            ))
+                        }
+                    </div>
+                </div>
+                <div class="badge-foot">Votes: {votes}</div>
+            </div>
+        </div>
+
+        <!-- ctas -->
+        <div class="cta">
+            <a
+                href={link}
+                class="greebtn btn btn-primary"
+                rel={relAttr}
+                target={targetAttr}
+                aria-label={`Get bonus at ${name}`}
+            >
+                Get Bonus
+            </a>
+            <a
+                href={link}
+                class="visit"
+                rel={relAttr}
+                target={targetAttr}
+                aria-label={`Visit ${name} site`}
+            >
+                Visit Site
+            </a>
+        </div>
+    </div>
+</article>
+
+<style>
+    :root {
+        --green: #118a3c;
+        --green-strong: #0ea34a;
+        --ink: #1e2937;
+        --muted: #374151;
+        --line: #e6e9ef;
+    }
+
+    /* card shell */
+    .casino-card {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.14);
+        color: var(--ink);
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    /* Remove bullets anywhere inside the card (robust) */
+    .casino-card ul,
+    .casino-card li {
+        list-style: none;
+    }
+    .casino-card ul {
+        margin: 0;
+        padding: 0;
+    }
+    .casino-card li::marker {
+        content: "";
+    }
+
+    /* layout (desktop) */
+    .grid {
+        display: grid;
+        grid-template-columns: minmax(160px, 260px) 1fr minmax(210px, 240px) minmax(
+                170px,
+                210px
+            );
+        grid-template-areas: "left middle rating cta";
+        align-items: stretch;
+        column-gap: 0;
+    }
+    .left {
+        grid-area: left;
+    }
+    .middle {
+        grid-area: middle;
+    }
+    .rating {
+        grid-area: rating;
+    }
+    .cta {
+        grid-area: cta;
+    }
+
+    /* left */
+    .left {
+        position: relative;
+        padding: 18px 18px;
+        background: #d3d3d3;
+        border-right: 1px solid var(--line);
+    }
+    .logo-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 88px;
+            margin-top: 1rem;
+    }
+    .logo-wrap img {
+        width: auto;
+        height: 9rem;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* middle */
+    .middle {
+        position: relative;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+    }
+    .checks {
+        display: grid;
+        gap: 12px;
+        font-size: 16px;
+        color: var(--ink);
+    }
+    .checks li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    .tick {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+    }
+    .info {
+        font-weight: 600;
+    }
+
+    /* chevrons (desktop only) */
+    .middle::before,
+    .middle::after {
+        content: "";
+        position: absolute;
+        top: 70%;
+        transform: translateY(-50%);
+        width: 2rem;
+        height: 3rem;
+        background:
+            linear-gradient(221deg, transparent 50%, #d3d3d3 0) top,
+            linear-gradient(-45deg, transparent 50%, #d3d3d3 0) bottom;
+        background-size: 100% 50%;
+        background-repeat: no-repeat;
+        margin: -2rem;
+    }
+    .middle::before {
+        left: -7px;
+    }
+
+
+    /* rating badge */
+    .rating {
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .badge {
+        width: min(240px, 100%);
+        border: 1.5px solid #2a2a2a;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .badge-top {
+        padding: 12px 14px 8px;
+        text-align: center;
+    }
+    .num {
+        font-size: 34px;
+        font-weight: 800;
+        color: var(--green-strong);
+        line-height: 1;
+    }
+    .stars {
+        margin-top: 8px;
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+    .star {
+        width: 20px;
+        height: 20px;
+        opacity: 0.28;
+        object-fit: contain;
+    }
+    .star.filled {
+        opacity: 1;
+    }
+    .badge-foot {
+        background: linear-gradient(180deg, #2f2f2f, #1b1b1b);
+        color: #e8edf3;
+        text-align: center;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    /* ctas */
+    .cta {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        text-align: center;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 0.02em;
+        width: 6rem;
+    }
+    .btn-primary {
+        background: #118a3c;
+        box-shadow: 0 8px 16px rgba(17, 138, 60, 0.28);
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        width: 8rem;
+    }
+    .btn-primary:hover {
+        filter: brightness(1.07);
+    }
+    .visit {
+        color: #3a3a3a;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    .visit:hover,
+    .visit:focus-visible {
+        color: #111;
+    }
+
+    /* ------------ TABLET <= 990px ------------ */
+    /* 1) Name the grid areas once (desktop or global) */
+    .grid {
+        display: grid;
+    }
+    .left {
+        grid-area: left;
+    }
+    .middle {
+        grid-area: middle;
+    }
+    .rating {
+        grid-area: rating;
+    }
+    .cta {
+        grid-area: cta;
+    }
+
+    /* Optional: your desktop layout (example only) */
+    /* .grid {
+  grid-template-columns: minmax(220px, 260px) 1fr minmax(220px, 260px) minmax(180px, 220px);
+  grid-template-areas: "left middle rating cta";
+} */
+
+    /* 2) At ≤ 990px use two columns with explicit widths */
+    @media (max-width: 990px) {
+        .grid {
+            /* Two columns:
+       - Left column ~40% but never smaller than 260px (good for logo+rating)
+       - Right column flexes to fill remaining space (text+buttons)
+    */
+            grid-template-columns: minmax(30px, 40%) 1fr;
+            grid-template-areas:
+                "left   middle"
+                "rating cta";
+            column-gap: 14px;
+            row-gap: 14px;
+            padding: 12px;
+        }
+
+        /* Clean edges between columns */
+        .left,
+        .middle {
+            border-right: none;
+            padding: 0;
+        }
+        .middle::before,
+        .middle::after {
+            display: none;
+        }
+
+        /* Make rating badge and logo behave nicely inside the left column */
+        .logo-wrap {
+            justify-content: flex-start;
+        }
+        .logo-wrap img {
+            max-width: 100%;
+            height: auto;
+            height: 6rem;
+            padding: 1rem;
+        }
+        .rating {
+            justify-content: flex-start;
+        }
+        .rating .badge {
+            width: 100%;
+            max-width: 280px; /* adjust to your design (260–300px works well) */
+            margin: 0; /* align to left so it lines up under the logo */
+        }
+
+        /* Buttons on the right column */
+        .cta {
+            align-items: flex-start; /* align with the body copy */
+            width: 11rem;
+        }
+        .btn {
+            width: 100%;
+            max-width: 260px; /* the exact button width you wanted */
+        }
+        .info {
+                font-weight: 600;
+    font-size: 11px;
+    line-height: initial;
+        }
+        
+    }
+
+    /* ------------ MOBILE <= 560px ------------ */
+    /* @media (max-width: 560px) {
+        .grid {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "rating"
+                "left"
+                "middle"
+                "cta";
+            row-gap: 12px;
+        }
+        .cta {
+            align-items: stretch;
+        }
+        .btn {
+            width: 100%;
+            max-width: none;
+        }
+        .logo-wrap img {
+            height: 5.5rem;
+        }
+    } */
+</style>

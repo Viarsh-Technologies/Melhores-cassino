@@ -1,0 +1,222 @@
+---
+/** Optional types for better DX */
+type QuickLink = { label: string; href: string; external?: boolean };
+type Badge = {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  /** NEW: click-through URL */
+  href?: string;
+  /** NEW: open in new tab by default */
+  external?: boolean;
+  /** NEW: custom rel if needed */
+  rel?: string;
+};
+
+interface Props {
+  /** Right-column brand mark (use your footer logo or wordmark) */
+  logo?: string;
+  logoAlt?: string;
+  /** Left-column links */
+  links?: QuickLink[];
+  /** Responsible gambling / trust badges */
+  badges?: Badge[];
+  /** Optional custom disclosure text */
+  disclosure?: string;
+  /** Footer heading (defaults to singular like the screenshot) */
+  linksHeading?: string;
+}
+
+const defaultLinks: QuickLink[] = [
+  { label: "Terms of use", href: "/terms" },
+  { label: "Responsible Gambling", href: "/responsible-gambling" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Cookie Settings", href: "#cookie-settings" },
+];
+
+const defaultBadges: Badge[] = [
+  {
+    src: "/badges/18plus.png",
+    alt: "18+ Only",
+    width: 44,
+    height: 44,
+    href: "https://www.srij.turismodeportugal.pt/pt/jogadores/jogo-responsavel",
+    external: true,
+  },
+  {
+    src: "/badges/ecogra.png",
+    alt: "eCOGRA",
+    width: 74,
+    height: 32,
+    href: "https://ecogra.org/",
+    external: true,
+  },
+  {
+    src: "/badges/gamcare.png",
+    alt: "GamCare",
+    width: 74,
+    height: 32,
+    href: "https://www.gamcare.org.uk/",
+    external: true,
+  },
+  {
+    src: "/badges/gambleaware.png",
+    alt: "GambleAware",
+    width: 126,
+    height: 28,
+    href: "https://www.begambleaware.org/",
+    external: true,
+  },
+];
+
+const {
+  logo = "/logo.png",
+  logoAlt = "Cassino Autorizado Online",
+  links = defaultLinks,
+  badges = defaultBadges,
+  disclosure = `Esta plataforma oferece informação especializada sobre operadores autorizados pelo SRIJ (Serviço de Regulação e Inspeção de Jogos) em Portugal. Não operamos diretamente serviços de jogo online.`,
+  linksHeading = "Quick Link",
+} = Astro.props as Props;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer-extended" aria-labelledby="footer-heading">
+  <div class="footer-inner">
+    <!-- Left column: Quick links -->
+    <nav class="links" aria-label="Quick links">
+      <h2 id="footer-heading" class="links-title">{linksHeading}</h2>
+      <ul class="links-list">
+        {links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              {...(l.external ? { target: "_blank", rel: "noopener nofollow" } : {})}
+            >
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Right column: brand + disclosure -->
+    <div class="disclaimer">
+      <div class="brand">
+        <img src={logo} alt={logoAlt} loading="lazy" decoding="async" />
+      </div>
+
+      <p class="copy">{disclosure}</p>
+
+      <div class="badges" aria-label="Responsible gambling and safety badges">
+        {badges.map((b) => {
+          const img = (
+            <img
+              class="badge"
+              src={b.src}
+              alt={b.alt}
+              loading="lazy"
+              decoding="async"
+              width={b.width ?? 90}
+              height={b.height ?? 36}
+            />
+          );
+
+          return b.href ? (
+            <a
+              class="badge-link"
+              href={b.href}
+              target={b.external === false ? "_self" : "_blank"}
+              rel={b.rel ?? "noopener nofollow"}
+              aria-label={b.alt}
+            >
+              {img}
+            </a>
+          ) : (
+            img
+          );
+        })}
+      </div>
+
+      <div class="copyright">All rights reserved © {year}</div>
+    </div>
+  </div>
+</footer>
+
+<style>
+/* Shell */
+.site-footer-extended{
+  background:#2f2f2f; /* dark grey like the screenshot */
+  color:#d6d6d6;
+}
+
+/* Grid layout */
+.footer-inner{
+  max-width:1120px;
+  margin:0 auto;
+  padding:44px 16px 40px;
+  display:grid;
+  grid-template-columns: 1fr 2fr; /* left/right split */
+  gap:48px;
+}
+
+/* Left: Quick Links */
+.links-title{
+  margin:0 0 16px;
+  color:#ffffff;
+  font-weight:800;
+  font-size:20px;
+  letter-spacing:.02em;
+}
+.links-list{
+  list-style:none; margin:0; padding:0;
+  display:grid; gap:12px;
+}
+.links-list a{
+  color:#e9e9e9; text-decoration:none;
+}
+.links-list a:hover,
+.links-list a:focus-visible{
+  color:#ffffff; text-decoration:underline; outline:none;
+}
+
+/* Right: vertical divider + content */
+.disclaimer{
+  border-left:1px solid rgba(255,255,255,.18); /* lighter divider like image */
+  padding-left:36px;
+}
+.brand img{
+  max-height:40px; width:auto; display:block;
+  margin-bottom:14px;
+}
+.copy{
+  margin:0; color:#dcdcdc; line-height:1.7;
+  max-width:680px;
+}
+
+/* Badges row */
+.badges{
+  display:flex; align-items:center; flex-wrap:wrap;
+  gap:18px; margin-top:16px;
+}
+.badge{ filter:brightness(1.1) contrast(1.05); opacity:.95; height:2rem; width:auto; }
+.badge-link{ line-height:0; display:inline-flex; }
+.badge-link:hover .badge,
+.badge-link:focus-visible .badge{ opacity:1; filter:brightness(1.15) contrast(1.08); }
+.badge-link:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+
+/* Copyright */
+.copyright{
+  margin-top:18px; color:#bfbfbf; font-size:14px;
+}
+
+/* Responsive */
+@media (max-width: 1024px){
+  .footer-inner{ grid-template-columns: 1fr; gap:28px; }
+  .disclaimer{ border-left:none; padding-left:0; }
+}
+@media (max-width: 420px){
+  .badges{ gap:14px; }
+}
+</style>

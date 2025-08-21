@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Optional global base font */
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+}
+html { font-family: var(--font-sans); }

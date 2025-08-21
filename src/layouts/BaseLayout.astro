@@ -1,0 +1,125 @@
+---
+import "../styles/global.css";
+import SiteFooter from "../components/SiteFooter.astro";
+import Header from "../components/Header.astro";
+import "../styles/tailwind.css";
+
+interface Props {
+    title?: string;
+}
+const { title = "Top 10 Best Irish Casinos" } = Astro.props as Props;
+const year = new Date().getFullYear();
+---
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>{title}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="index,follow" />
+        <meta name="format-detection" content="telephone=no" />
+    </head>
+    <body class="site">
+        <!-- Sticky ribbon header (full width) -->
+        <Header
+            logo="/logo.png"
+            logoAlt="Top10 Best Irish Casino"
+            prefix="CASSINO"
+            highlight="AUTORIZADO"
+            suffix="ONLINE"
+        />
+
+        <main class="site-main">
+            <slot />
+        </main>
+
+        <!-- New extended footer -->
+        <SiteFooter
+            logo="/logo.png"
+            logoAlt="Top10 Best Irish Casino"
+            links={[
+                { label: "Terms of use", href: "/terms" },
+                {
+                    label: "Responsible Gambling",
+                    href: "/responsible-gambling",
+                },
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Cookie Settings", href: "#cookie-settings" },
+            ]}
+            badges={[
+                {
+                    src: "/badges/18plus.png",
+                    alt: "18+ Only",
+                    width: 44,
+                    height: 44,
+                    href: "https://www.srij.turismodeportugal.pt/pt/jogadores/jogo-responsavel",
+                },
+                {
+                    src: "/badges/ecogra.png",
+                    alt: "eCOGRA",
+                    width: 74,
+                    height: 32,
+                    href: "https://ecogra.org/",
+                },
+                {
+                    src: "/badges/gamcare.png",
+                    alt: "GamCare",
+                    width: 74,
+                    height: 32,
+                    href: "https://www.gamcare.org.uk/",
+                },
+                {
+                    src: "/badges/gambleaware.png",
+                    alt: "GambleAware",
+                    width: 126,
+                    height: 28,
+                    href: "https://www.begambleaware.org/",
+                },
+            ]}
+        />
+
+        <!-- (remove your old minimal footer block) -->
+    </body>
+</html>
+
+<style>
+    .site {
+        background: #0a0f12;
+        color: #fff;
+        font-family:
+            system-ui,
+            -apple-system,
+            "Segoe UI",
+            Roboto,
+            "Poppins",
+            sans-serif;
+    }
+    .disclosure {
+        background: rgba(0, 0, 0, 0.95);
+        color: #d1d5db;
+        font-size: 11px;
+        text-align: center;
+        padding: 8px 10px;
+        border-bottom: 1px solid #2e364d;
+    }
+    .disc-link {
+        color: #60a5fa;
+        text-decoration: underline;
+    }
+    .site-header {
+        padding: 24px 0;
+        text-align: center;
+        border-bottom: 1px solid rgba(47, 224, 109, 0.8);
+    }
+    .site-title {
+        margin: 0;
+        font-weight: 800;
+        font-size: 32px;
+        color: #35e06d;
+    }
+    .site-main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+</style>

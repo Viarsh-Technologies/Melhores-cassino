@@ -1,0 +1,92 @@
+---
+interface Props {
+    logo?: string; // e.g. "/logo.png"
+    logoAlt?: string; // accessible text
+    prefix?: string;
+    highlight?: string; // yellow word
+    suffix?: string;
+    ariaLabel?: string;
+}
+const {
+    logo = "/logo.png",
+    logoAlt = "Cassino Autorizado",
+    prefix = "CASSINO",
+    highlight = "AUTORIZADO",
+    suffix = "ONLINE",
+    ariaLabel = `${prefix} ${highlight} ${suffix}`,
+} = Astro.props as Props;
+---
+
+<header class="ribbon-header" aria-label={ariaLabel}>
+    <div class="ribbon">
+        <div class="ribbon-inner">
+            <img
+                class="brand-logo"
+                src={logo}
+                alt={logoAlt}
+                width="140"
+                height="28"
+                decoding="async"
+                loading="eager"
+                fetchpriority="high"
+            />
+        </div>
+    </div>
+</header>
+
+<style>
+    /* Sticky, full-width header with a thin light rule on top */
+    .ribbon-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: #0b0b0b; /* black band behind the red ribbon */
+    }
+
+    /* Red ribbon strip */
+    .ribbon {
+        background: #e10606;
+    }
+
+    /* Centered inner container */
+    .ribbon-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Logo */
+    .brand-logo {
+        height: 28px;
+        width: auto;
+        display: block;
+        object-fit: contain;
+    }
+
+    /* Text */
+    .label {
+        color: #fff;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        font-size: 18px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+    .label .hl {
+        color: #ffd400;
+    }
+
+    @media (max-width: 640px) {
+        .brand-logo {
+            height: 22px;
+        }
+        .label {
+            font-size: 16px;
+            letter-spacing: 0.03em;
+        }
+    }
+</style>
