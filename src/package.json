@@ -1,0 +1,31 @@
+{
+  "name": "casino-site",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "clean": "rimraf dist .astro node_modules/.cache",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.12",
+    "astro": "^5.13.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/tailwind": "^6.0.2",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.3"
+  }
+}
