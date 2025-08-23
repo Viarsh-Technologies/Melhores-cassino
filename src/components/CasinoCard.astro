@@ -178,6 +178,7 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
     .casino-card ul {
         margin: 0;
         padding: 0;
+        padding-left: 1rem;
     }
     .casino-card li::marker {
         content: "";
@@ -186,10 +187,9 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
     /* layout (desktop) */
     .grid {
         display: grid;
-        grid-template-columns: minmax(160px, 260px) 1fr minmax(210px, 240px) minmax(
-                170px,
-                210px
-            );
+        grid-template-columns:
+            minmax(160px, 260px) 1fr minmax(210px, 240px)
+            minmax(170px, 210px);
         grid-template-areas: "left middle rating cta";
         align-items: stretch;
         column-gap: 0;
@@ -219,11 +219,12 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
         align-items: center;
         justify-content: center;
         min-height: 88px;
-            margin-top: 1rem;
+        margin-top: 1rem;
     }
     .logo-wrap img {
         width: auto;
-        height: 9rem;
+        height: 110px;
+        width: 138px;
         object-fit: contain;
         display: block;
     }
@@ -231,13 +232,12 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
     /* middle */
     .middle {
         position: relative;
-        padding: 18px 20px;
+        /* padding: 18px 20px; */
         display: flex;
         align-items: center;
     }
     .checks {
         display: grid;
-        gap: 12px;
         font-size: 16px;
         color: var(--ink);
     }
@@ -260,7 +260,7 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
     .middle::after {
         content: "";
         position: absolute;
-        top: 70%;
+        top: 60%;
         transform: translateY(-50%);
         width: 2rem;
         height: 3rem;
@@ -269,12 +269,11 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
             linear-gradient(-45deg, transparent 50%, #d3d3d3 0) bottom;
         background-size: 100% 50%;
         background-repeat: no-repeat;
-        margin: -2rem;
+        margin: -15px;
     }
     .middle::before {
         left: -7px;
     }
-
 
     /* rating badge */
     .rating {
@@ -284,7 +283,7 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
         justify-content: center;
     }
     .badge {
-        width: min(240px, 100%);
+        width: min(189px, 100%);
         border: 1.5px solid #2a2a2a;
         border-radius: 16px;
         overflow: hidden;
@@ -349,7 +348,10 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
         background: #118a3c;
         box-shadow: 0 8px 16px rgba(17, 138, 60, 0.28);
         border: 1px solid rgba(0, 0, 0, 0.18);
-        width: 8rem;
+        width: 175px;
+        height: 58px;
+        font-size: 22px;
+        font-weight: 500;
     }
     .btn-primary:hover {
         filter: brightness(1.07);
@@ -383,95 +385,220 @@ const targetAttr = target ?? (isExternal ? "_blank" : "_self");
         grid-area: cta;
     }
 
-    /* Optional: your desktop layout (example only) */
-    /* .grid {
-  grid-template-columns: minmax(220px, 260px) 1fr minmax(220px, 260px) minmax(180px, 220px);
-  grid-template-areas: "left middle rating cta";
-} */
-
     /* 2) At ≤ 990px use two columns with explicit widths */
     @media (max-width: 990px) {
         .grid {
-            /* Two columns:
-       - Left column ~40% but never smaller than 260px (good for logo+rating)
-       - Right column flexes to fill remaining space (text+buttons)
-    */
-            grid-template-columns: minmax(30px, 40%) 1fr;
+            /* gray strip on the left, content on the right */
+            grid-template-columns: minmax(220px, 32%) 1fr;
             grid-template-areas:
                 "left   middle"
-                "rating cta";
-            column-gap: 14px;
-            row-gap: 14px;
-            padding: 12px;
+                "rating middle"
+                "rating cta"; /* CTA sits under the middle column */
+            column-gap: 0;
+            /* row-gap: 10px; */
+            padding: 0;
         }
 
-        /* Clean edges between columns */
-        .left,
+        /* LEFT (gray) */
+        .left {
+            background: #dcdcdc;
+            border-right: 1px solid var(--line);
+            padding: 10px;
+        }
+        .logo-wrap {
+            justify-content: flex-start;
+        }
+        .logo-wrap img {
+            height: 11rem;
+            width: 16rem;
+            max-width: 100%;
+            padding: 1rem;
+        }
+
+        /* MIDDLE (white) */
         .middle {
-            border-right: none;
-            padding: 0;
+            background: #fff;
+            padding: 8px 16px;
         }
         .middle::before,
         .middle::after {
-            display: none;
+            margin: -19px;
+            top: 75%;
         }
 
-        /* Make rating badge and logo behave nicely inside the left column */
+        /* RATING (gray, under left) */
+        .rating {
+            background: #dcdcdc;
+            border-right: 1px solid var(--line);
+            padding: 10px;
+            justify-content: center;
+        }
+        .rating .badge {
+            /* width: 100%; */
+            max-width: 280px;
+            margin: 0;
+        }
+
+        /* CTA (white, under middle) */
+        .cta {
+            grid-area: cta;
+            background: #fff;
+            justify-self: center; /* center the grid item */
+            align-self: start;
+            align-items: center; /* center buttons inside */
+            justify-content: center;
+            width: auto;
+            margin: 0 auto;
+            padding: 0 16px 12px;
+        }
+
+        .btn {
+            width: clamp(260px, 60vw, 409px);
+        } /* roomy but not overflowing */
+
+        .info {
+            font-weight: 600;
+            font-size: 28px;
+            line-height: initial;
+        }
+    }
+
+    /* 2) At ≤ 780px use two columns with explicit widths */
+    /* 2) At ≤ 780px use two columns with explicit widths (match screenshot) */
+    @media (max-width: 780px) {
+        .grid {
+            grid-template-columns: minmax(32%, 34%) 1fr; /* gray strip + content */
+            grid-template-areas:
+                "left   middle"
+                "rating middle"
+                "rating cta"; /* rating under left, CTA under middle */
+            column-gap: 0;
+            row-gap: 0;
+            padding: 0;
+        }
+
+        /* LEFT STRIP (logo area) */
+        .left {
+            grid-area: left;
+            background: #dcdcdc; /* light gray like image */
+            padding: 10px 10px 0;
+            border-right: 1px solid var(--line);
+        }
         .logo-wrap {
             justify-content: flex-start;
         }
         .logo-wrap img {
             max-width: 100%;
-            height: auto;
             height: 6rem;
-            padding: 1rem;
-        }
-        .rating {
-            justify-content: flex-start;
-        }
-        .rating .badge {
-            width: 100%;
-            max-width: 280px; /* adjust to your design (260–300px works well) */
-            margin: 0; /* align to left so it lines up under the logo */
+            padding: 8px;
         }
 
-        /* Buttons on the right column */
-        .cta {
-            align-items: flex-start; /* align with the body copy */
-            width: 11rem;
+        /* CHECKLIST (white panel) + notch between columns */
+        .middle {
+            grid-area: middle;
+            position: relative;
+            padding: 8px 14px 0 18px;
+            background: #fff;
         }
-        .btn {
-            width: 100%;
-            max-width: 260px; /* the exact button width you wanted */
+        /* notch (white chevron) */
+        /* chevrons (desktop only) */
+        .middle::before,
+        .middle::after {
+            content: "";
+            position: absolute;
+            top: 108%;
+            transform: translateY(-50%);
+            width: 2rem;
+            height: 3rem;
+            background:
+                linear-gradient(221deg, transparent 50%, #d3d3d3 0) top,
+                linear-gradient(-45deg, transparent 50%, #d3d3d3 0) bottom;
+            background-size: 100% 50%;
+            background-repeat: no-repeat;
+            margin: -22px;
+        }
+        .middle::before {
+            left: -7px;
+            display: none;
+        }
+        .middle::after {
+            bottom: 48px;
+        } /* lower notch near button */
+        .checks {
+            row-gap: 8px;
+        }
+        .tick {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
         }
         .info {
-                font-weight: 600;
-    font-size: 11px;
-    line-height: initial;
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 1.35;
         }
-        
-    }
 
-    /* ------------ MOBILE <= 560px ------------ */
-    /* @media (max-width: 560px) {
-        .grid {
-            grid-template-columns: 1fr;
-            grid-template-areas:
-                "rating"
-                "left"
-                "middle"
-                "cta";
-            row-gap: 12px;
+        /* RATING (on gray strip under logo) */
+        .rating {
+            grid-area: rating;
+            background: #dcdcdc;
+            border-right: 1px solid var(--line);
+            padding: 8px 10px 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
+        .rating .badge {
+            width: 128px; /* compact tile like image */
+            max-width: 100%;
+            margin: 0 0 0 6px;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); /* small drop like image */
+            border-radius: 12px;
+        }
+        .num {
+            font-size: 22px;
+        }
+        .stars {
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .star {
+            width: 12px;
+            height: 12px;
+        }
+        .badge-foot {
+            font-size: 11px;
+            padding: 6px 8px;
+        }
+
+        /* CTA (big green button under checklist) */
         .cta {
-            align-items: stretch;
+            grid-area: cta;
+            background: #fff;
+            justify-self: start;
+            align-self: start;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px 12px 18px;
         }
         .btn {
+            margin-top: 1rem;
+            width: 14rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(17, 138, 60, 0.28);
+        }
+        .visit {
+            display: block;
             width: 100%;
-            max-width: none;
+            max-width: 290px;
+            text-align: center;
+            /* margin: 8px 0 0; */
         }
-        .logo-wrap img {
-            height: 5.5rem;
+
+        /* tidy */
+        .left,
+        .middle {
+            border-right: none;
         }
-    } */
+    }
 </style>
